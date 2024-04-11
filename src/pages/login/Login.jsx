@@ -12,6 +12,8 @@ function Login() {
         async function loginToAccount(data) {
             try {
                 const result = await axios.post(noviUri + 'api/auth/signin', data);
+                localStorage.setItem('token' , result.data.accessToken);
+                localStorage.setItem('accountID' , result.data.id);
                 return result;
             } catch (error) {
                 console.error("Error logging in to account:", error);

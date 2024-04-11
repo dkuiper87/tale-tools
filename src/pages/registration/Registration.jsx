@@ -19,6 +19,7 @@ function Register() {
         async function createAccount(data) {
             try {
                 const result = await axios.post(noviUri + 'api/auth/signup', data);
+                //console.log(result);
                 return result;
             } catch (error) {
                 console.error("Error creating account:", error);
