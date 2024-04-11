@@ -1,31 +1,45 @@
 import {useForm} from "react-hook-form";
 import axios from "axios";
+import noviUri from "../../constants/novibackend.jsx";
+import {useNavigate} from "react-router-dom";
 
 function Register() {
-    const { register, getValues } = useForm();
+    const { register, getValues, handleSubmit, formState: { errors, isValid } } = useForm({mode: `onBlur`});
+    const navigate = useNavigate();
 
     {/* Function to handle the form submit */}
-/*    function handleFormSubmit(data) {
+    async function handleFormSubmit(data) {
 
-        {/!* Add user role to the data *!/}
+        {/* Add user role to the data */}
         const updatedData = {
             ...data,
             role: ["user"]
         }
 
-        async function createAccount() {
+        async function createAccount(data) {
             try {
-
+                const result = await axios.post(noviUri + 'api/auth/signup', data);
+                return result;
+            } catch (error) {
+                console.error("Error creating account:", error);
+                throw error;
             }
         }
 
-    }*/
+        try {
+            await createAccount(updatedData);
+            navigate("/login");
+        } catch (error) {
+            console.error("Error creating account:", error);
+        }
+
+
+    }
 
     return (
         <>
-            <p>This is the Registration Page</p>
             {/* Add form here */}
-            <form>
+            <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <label htmlFor="username-field">
                     User Name:
                     <input
@@ -36,16 +50,17 @@ function Register() {
                                 value: true,
                                 message: "Please pick a username.",
                             },
-                            minlength: {
+                            minLength: {
                                 value: 6,
                                 message: "Your username needs to be at least 6 characters.",
                             },
-                            maxlength: {
+                            maxLength: {
                                 value: 25,
                                 message: "Your username needs to be 25 characters or less.",
                             },
                         })}
                     />
+                    {errors.username && <p>{errors.username.message}</p>}
                 </label>
                 <label htmlFor="email-field">
                     E-Mail:
@@ -63,6 +78,7 @@ function Register() {
                             },
                         })}
                     />
+                    {errors.email && <p>{errors.email.message}</p>}
                 </label>
                 <label htmlFor="email-confirmation-field">
                     Confirm E-Mail:
@@ -81,6 +97,7 @@ function Register() {
                             validate: (emailMatch) => (emailMatch === getValues().email) || 'Email does not match.'
                         })}
                     />
+                    {errors['email-confirmation'] && <p>{errors['email-confirmation'].message}</p>}
                 </label>
                 <label htmlFor="password-field">
                     Password:
@@ -92,16 +109,17 @@ function Register() {
                                 value: true,
                                 message: "Please choose a password.",
                             },
-                            minlength: {
+                            minLength: {
                                 value: 6,
                                 message: "Your password needs to be at least 6 characters long",
                             },
-                            maxlength: {
+                            maxLength: {
                                 value: 25,
                                 message: "Your password needs to be 25 characters or less.",
                             },
                         })}
                     />
+                    {errors.password && <p>{errors.password.message}</p>}
                 </label>
                 <label htmlFor="password-confirmation-field">
                     Confirm Password:
@@ -113,23 +131,29 @@ function Register() {
                                 value: true,
                                 message: "Please repeat your password.",
                             },
-                            minlength: {
+                            minLength: {
                                 value: 6,
                                 message: "Your password needs to be at least 6 characters long",
                             },
-                            maxlength: {
+                            maxLength: {
                                 value: 25,
                                 message: "Your password needs to be 25 characters or less.",
                             },
+                            validate: (passwordMatch) => (passwordMatch === getValues().password) || 'Password does not match.'
                         })}
                     />
+                    {errors['password-confirmation'] && <p>{errors['password-confirmation'].message}</p>}
                 </label>
+                <button
+                    type="submit"
+                    disabled={!isValid} //check if form can be submitted
+                >Submit
+                </button>
             </form>
-            {/* Form submit button */}
+
         </>
     )
 }
 
 export default Register
 
-{/*  */}
