@@ -147,7 +147,8 @@ function Register() {
                 <button
                     type="submit"
                     disabled={!isValid} //check if form can be submitted
-                >Submit
+                >
+                    Submit
                 </button>
             </form>
 
