@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext } from "react";
 import axios from "axios";
 import noviUri from "../constants/novibackend.jsx";
 
@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
         try {
             const result = await axios.post(noviUri + 'api/auth/signin', userData);
             localStorage.setItem('token', result.data.accessToken);
-            setUser(userData);
+            setUser(result.data);
+            return result;
         } catch (error) {
             console.error("Error logging in to account:", error);
             throw error;
@@ -25,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         // Logic for logging out user
         localStorage.removeItem('token');
-        localStorage.removeItem('accountID');
         setUser(null);
     };
 

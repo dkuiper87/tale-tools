@@ -1,34 +1,23 @@
 import {useForm} from "react-hook-form";
-import axios from "axios";
-import noviUri from "../../constants/novibackend.jsx";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 function Login() {
     const { register, getValues, handleSubmit, formState: { errors, isValid } } = useForm({mode: `onBlur`});
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     //Function to hande the form submit
     async function handleFormSubmit(data) {
-        //async function to login to backend
-        async function loginToAccount(data) {
-            try {
-                const result = await axios.post(noviUri + 'api/auth/signin', data);
-                localStorage.setItem('token' , result.data.accessToken);
-                return result;
-            } catch (error) {
-                console.error("Error logging in to account:", error);
-                throw error;
-            }
-        }
-
-        //Running the login function.
         try {
-            await loginToAccount(data);
+            const result = await login(data); // Call the login function provided by the context
+            localStorage.setItem('token', result.data.accessToken);
             navigate("/account");
         } catch (error) {
             console.error("Error logging in to account:", error);
         }
     }
+
 
     return (
         <>
