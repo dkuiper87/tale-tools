@@ -4,16 +4,16 @@ import noviUri from "../../constants/novibackend.jsx";
 import {useNavigate} from "react-router-dom";
 
 function Login() {
-    //async function to login to backend
     const { register, getValues, handleSubmit, formState: { errors, isValid } } = useForm({mode: `onBlur`});
     const navigate = useNavigate();
 
+    //Function to hande the form submit
     async function handleFormSubmit(data) {
+        //async function to login to backend
         async function loginToAccount(data) {
             try {
                 const result = await axios.post(noviUri + 'api/auth/signin', data);
                 localStorage.setItem('token' , result.data.accessToken);
-                localStorage.setItem('accountID' , result.data.id);
                 return result;
             } catch (error) {
                 console.error("Error logging in to account:", error);
@@ -21,6 +21,7 @@ function Login() {
             }
         }
 
+        //Running the login function.
         try {
             await loginToAccount(data);
             navigate("/account");
@@ -31,6 +32,7 @@ function Login() {
 
     return (
         <>
+            {/* Login form with input validation and error handling. */}
             <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <label htmlFor="username-field">
                     User Name:

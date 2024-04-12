@@ -7,19 +7,19 @@ function Register() {
     const { register, getValues, handleSubmit, formState: { errors, isValid } } = useForm({mode: `onBlur`});
     const navigate = useNavigate();
 
-    {/* Function to handle the form submit */}
+    //Function to handle the form submit.
     async function handleFormSubmit(data) {
 
-        {/* Add user role to the data */}
+        //Add user role to the data.
         const updatedData = {
             ...data,
             role: ["user"]
         }
 
+        //Function to create the account in the backend.
         async function createAccount(data) {
             try {
                 const result = await axios.post(noviUri + 'api/auth/signup', data);
-                //console.log(result);
                 return result;
             } catch (error) {
                 console.error("Error creating account:", error);
@@ -27,6 +27,7 @@ function Register() {
             }
         }
 
+        //Running the create account function.
         try {
             await createAccount(updatedData);
             navigate("/login");
@@ -39,7 +40,7 @@ function Register() {
 
     return (
         <>
-            {/* Add form here */}
+            {/* Registration form with imput validation and error handling. */}
             <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <label htmlFor="username-field">
                     User Name:

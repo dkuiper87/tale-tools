@@ -1,5 +1,7 @@
 import './App.css'
 
+import { AuthProvider } from "./context/AuthContext.jsx";
+
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home/Home.jsx";
 import Register from "./pages/registration/Registration.jsx";
@@ -13,15 +15,17 @@ import Sidebar from "./components/sidebar/Sidebar.jsx";
 function App() {
   return (
     <>
-        <Sidebar/>
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/register" element={<Register/>}/>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/account" element={<Account/>}/>
-            <Route path="/rules" element={<Rules/>}/>
-            <Route path="/encounters" element={<Encounters/>}/>
-        </Routes>
+        <AuthProvider>
+            <Sidebar/>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/register" element={<Register/>}/>
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/account" element={<Account/>}/>
+                <Route path="/rules" element={<Rules/>}/>
+                <Route path="/encounters" element={<Encounters/>}/>
+            </Routes>
+        </AuthProvider>
     </>
   )
 }
