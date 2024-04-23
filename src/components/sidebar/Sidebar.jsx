@@ -1,6 +1,9 @@
 import {NavLink} from "react-router-dom";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 function Sidebar() {
+    const {logout} = useAuth();
+
     return (
         <ul>
             <li>
@@ -27,6 +30,9 @@ function Sidebar() {
                     to="/rules">
                     Rules
                 </NavLink>
+            </li>
+            <li>
+                <button onClick={logout}>Logout</button>
             </li>
         </ul>
     )
