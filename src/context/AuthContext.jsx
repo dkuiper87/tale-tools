@@ -50,13 +50,20 @@ export const AuthProvider = ({ children }) => {
 
     // Logout function
     const logout = () => {
-        // Logic for logging out user
         localStorage.removeItem('token');
         setUser(null);
     };
 
+    // Update user email function
+    const updateEmail = (newEmail) => {
+        setUser(prevUser => ({
+            ...prevUser,
+            email: newEmail
+        }));
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, status }}>
+        <AuthContext.Provider value={{ user, login, logout, status, updateEmail }}>
             {children}
         </AuthContext.Provider>
     );

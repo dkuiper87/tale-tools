@@ -8,39 +8,26 @@ function Register() {
     const navigate = useNavigate();
 
     //Function to handle the form submit.
-    async function handleFormSubmit(data) {
-
+    const handleFormSubmit = async(data) => {
         //Add user role to the data.
         const updatedData = {
             ...data,
             role: ["user"]
-        }
+        };
 
-        //Function to create the account in the backend.
-        async function createAccount(data) {
-            try {
-                const result = await axios.post(noviUri + 'api/auth/signup', data);
-                return result;
-            } catch (error) {
-                console.error("Error creating account:", error);
-                throw error;
-            }
-        }
-
-        //Running the create account function.
+        //Function to create the account.
         try {
-            await createAccount(updatedData);
+            const result = await axios.post(noviUri + 'api/auth/signup', updatedData);
             navigate("/login");
         } catch (error) {
             console.error("Error creating account:", error);
+            throw error;
         }
-
-
-    }
+    };
 
     return (
         <>
-            {/* Registration form with imput validation and error handling. */}
+            {/* Registration form with input validation and error handling. */}
             <form onSubmit={handleSubmit(handleFormSubmit)}>
                 <label htmlFor="username-field">
                     User Name:
