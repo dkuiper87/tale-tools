@@ -1,6 +1,11 @@
+import MonsterList from "../../components/monsterList/MonsterList.jsx";
 function Encounters() {
+
     return (
-        <p>This is the Encounters Page</p>
+        <>
+            <h2>Encounters</h2>
+            <MonsterList/>
+        </>
     )
 }
 
