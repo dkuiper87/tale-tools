@@ -5,14 +5,19 @@ import MonsterListItem from "../monsterListItem/MonsterListItem.jsx";
 
 function MonsterList() {
     const [monsters, setMonsters] = useState([]);
-    const [uri, setUri] = useState(dndUri + "v1/monsters/");
+    const [uri, setUri] = useState(`${dndUri}v1/monsters/`);
     const [monsterCount, setMonsterCount] = useState(null);
     const [previousPage, setPreviousPage] = useState(null);
     const [nextPage, setNextPage] = useState('');
-    const [monstersPerPage, setMonstersPerPage] = useState(25);
+    const [monstersPerPage, setMonstersPerPage] = useState(50);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const monstersPerPageOptions = [25, 50, 75, 100];
+    const [sortMonsterList, setSortMonsterList] = useState('name');
+    const sortMonsterListOptions = ['name', 'size', 'type', 'cr'];
+    const filterMonsterByCrOptions = [0, 0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30] //Find another way to do this later, that is less bloated and can accommodate new higher cr monsters being added.
+    const [crLow, setCrLow] = useState(0);
+    const [crHigh, setCrHigh] = useState(30)
 
     useEffect(() => {
         async function fetchMonsterList() {
@@ -39,6 +44,32 @@ function MonsterList() {
         getMonsterList();
     }, [uri]);
 
+    const constructUri = (baseUri, options) => {
+        let constructedUri = baseUri;
+
+        // Add monsters per page limit
+        if (options.limit) {
+            constructedUri += `?limit=${options.limit}`;
+        }
+
+        // Add sorting option
+        if (options.ordering) {
+            constructedUri += `${constructedUri.includes('?') ? '&' : '?'}ordering=${options.ordering}`;
+        }
+
+        // Add pagination option
+        if (options.page) {
+            constructedUri += `${constructedUri.includes('?') ? '&' : '?'}page=${options.page}`;
+        }
+
+        // Add cr filter
+        if (options.cr1 || options.cr2) {
+            constructedUri += `${constructedUri.includes('?') ? '&' : '?'}cr__range=${options.cr1}%2C${options.cr2}`;
+        }
+
+        return constructedUri;
+    };
+
     const handlePageChange = async (newPage) => {
         try {
             const result = await axios.get(newPage);
@@ -54,11 +85,36 @@ function MonsterList() {
         }
     }
 
+    //Function to handle changing the number of monsters shown per page.
     const handleMonstersPerPage = (event) => {
         const selectedPerPage = parseInt(event.target.value);
         setMonstersPerPage(selectedPerPage);
-        setUri(`${dndUri}v1/monsters/?limit=${selectedPerPage}`);
+        setUri(constructUri(dndUri + 'v1/monsters/', { limit: selectedPerPage, ordering: sortMonsterList, cr1: crLow, cr2: crHigh, page: currentPage }));
         setCurrentPage(1); // Reset to the first page when changing monsters per page
+    }
+
+    //Function to handle sorting the list of monsters.
+    const handleSortMonsterList = (event) => {
+        const selectedSorting = event.target.value;
+        setSortMonsterList(selectedSorting);
+        setUri(constructUri(dndUri + 'v1/monsters/', { limit: monstersPerPage, ordering: selectedSorting, cr1: crLow, cr2: crHigh, page: currentPage }));
+        setCurrentPage(1); // Reset to the first page when changing how the list is sorted
+    }
+
+    //Function to handle setting the lowest CR value for filtering by CR.
+    const handleFilterMonsterByCrOptionsLow = (event) => {
+        const selectedLowCr = event.target.value;
+        setCrLow(selectedLowCr);
+        setUri(constructUri(dndUri + 'v1/monsters/', { limit: monstersPerPage, ordering: sortMonsterList, cr1: selectedLowCr, cr2: crHigh, page: currentPage }));
+        setCurrentPage(1); // Reset to the first page when changing the filter
+    }
+
+    //Function to handle setting the highest CR value for filtering by CR.
+    const handleFilterMonsterByCrOptionsHigh = (event) => {
+        const selectedHighCr = event.target.value;
+        setCrHigh(selectedHighCr);
+        setUri(constructUri(dndUri + 'v1/monsters/', { limit: monstersPerPage, ordering: sortMonsterList, cr1: crLow, cr2: selectedHighCr, page: currentPage }));
+        setCurrentPage(1); // Reset to the first page when changing the filter
     }
 
     // Function to extract the page number from the URL
@@ -126,6 +182,48 @@ function MonsterList() {
                     ))}
                 </select>
             </label>
+            <label htmlFor="sort-monster-list">
+                Sort by:
+                <select
+                    id="sort-monster-list"
+                    value={sortMonsterList}
+                    onChange={handleSortMonsterList}
+                >
+                    {sortMonsterListOptions.map((option, index) => (
+                        <option key={index} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label htmlFor="filter-cr-low-monster-list">
+                From CR:
+                <select
+                    id="filter-cr-low-monster-list"
+                    value={crLow}
+                    onChange={handleFilterMonsterByCrOptionsLow}
+                >
+                    {filterMonsterByCrOptions.map((option, index) => (
+                        <option key={index} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label htmlFor="filter-cr-low-monster-list">
+                To CR:
+                <select
+                    id="filter-cr-high-monster-list"
+                    value={crHigh}
+                    onChange={handleFilterMonsterByCrOptionsHigh}
+                >
+                    {filterMonsterByCrOptions.map((option, index) => (
+                        <option key={index} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            </label>
             <ul>
                 {monsters.map((monster) => (
                     <MonsterListItem
@@ -160,3 +258,4 @@ function MonsterList() {
 }
 
 export default MonsterList;
+
