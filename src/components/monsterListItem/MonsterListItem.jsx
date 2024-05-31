@@ -1,6 +1,7 @@
 import { useState } from "react";
+import monsterXpByCr from "../../constants/dndconstants.jsx";
 
-function MonsterListItem({ index, monster }) {
+function MonsterListItem({ index, monster, addMonsterToEncounter }) {
     const [expandedInfo, setExpandedInfo] = useState(false);
 
     // Function to format ability scores with their modifiers
@@ -8,6 +9,7 @@ function MonsterListItem({ index, monster }) {
         const modifier = Math.floor((score - 10) / 2);
         return `${score} (${modifier >= 0 ? '+' : ''}${modifier})`;
     };
+
 
     return (
         <li key={index} onClick={() => setExpandedInfo(!expandedInfo)}>
@@ -17,7 +19,7 @@ function MonsterListItem({ index, monster }) {
                     <h2>{monster.name}</h2>
                     <p>{monster.size} {monster.type}, {monster.alignment} {monster.document__slug.toUpperCase()}</p>
                 </header>
-
+                <button onClick={() => addMonsterToEncounter(monster)}>Add</button>
                 {/* Detailed information when expanded */}
                 {expandedInfo && (
                     <section>
@@ -56,7 +58,7 @@ function MonsterListItem({ index, monster }) {
                         <p><strong>Damage Immunities:</strong> {monster.damage_immunities}</p>
                         <p><strong>Senses:</strong> {monster.senses}</p>
                         <p><strong>Languages:</strong> {monster.languages}</p>
-                        <p><strong>Challenge:</strong> {monster.challenge_rating} ({monster.cr.toLocaleString()} XP)</p>
+                        <p><strong>Challenge:</strong> {monster.challenge_rating} ({monsterXpByCr[monster.challenge_rating].toLocaleString()} XP)</p>
 
                         {/* Special abilities */}
                         {monster.special_abilities.length > 0 && (

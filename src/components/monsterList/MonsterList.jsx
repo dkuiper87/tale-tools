@@ -3,7 +3,7 @@ import axios from "axios";
 import dndUri from "../../constants/dndbackend.jsx";
 import MonsterListItem from "../monsterListItem/MonsterListItem.jsx";
 
-function MonsterList() {
+function MonsterList({addMonsterToEncounter}) {
     const [monsters, setMonsters] = useState([]);
     const [uri, setUri] = useState(`${dndUri}v1/monsters/`);
     const [monsterCount, setMonsterCount] = useState(null);
@@ -229,6 +229,7 @@ function MonsterList() {
                     <MonsterListItem
                         key={monster.slug}
                         monster={monster}
+                        addMonsterToEncounter={addMonsterToEncounter}
                     />
                 ))}
             </ul>

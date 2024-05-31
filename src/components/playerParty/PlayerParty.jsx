@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import partyExperienceThreshold from "../../helpers/partyExperienceThreshold.js";
+
 
 function PlayerParty() {
     const { register, handleSubmit, reset } = useForm();
@@ -8,6 +10,7 @@ function PlayerParty() {
     const [showForm, setShowForm] = useState(false);
     const [selectPartyOptions, setSelectPartyOptions] = useState([]);
     const [selectedParty, setSelectedParty] = useState("");
+    //const partyThreshold = party.reduce((total, character) => total + xpThresholdsByLevel[character.level['Easy']], 0);
 
     useEffect(() => {
         // Load saved parties from localStorage on component mount
@@ -71,6 +74,8 @@ function PlayerParty() {
         }
     };
 
+
+
     return (
         <>
             <h2>Party</h2>
@@ -98,6 +103,10 @@ function PlayerParty() {
                             </li>
                         ))}
                     </ul>
+                    <p>Easy: {partyExperienceThreshold(party, 'Easy')}</p>
+                    <p>Medium: {partyExperienceThreshold(party, 'Medium')}</p>
+                    <p>Hard: {partyExperienceThreshold(party, 'Hard')}</p>
+                    <p>Deadly: {partyExperienceThreshold(party, 'Deadly')}</p>
                 </>
             )}
             {!showForm && (
@@ -152,5 +161,6 @@ function PlayerParty() {
         </>
     );
 }
+
 
 export default PlayerParty;
