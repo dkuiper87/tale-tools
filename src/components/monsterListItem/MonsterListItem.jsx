@@ -19,7 +19,10 @@ function MonsterListItem({ index, monster, addMonsterToEncounter }) {
                     <h2>{monster.name}</h2>
                     <p>{monster.size} {monster.type}, {monster.alignment} {monster.document__slug.toUpperCase()}</p>
                 </header>
-                <button onClick={() => addMonsterToEncounter(monster)}>Add</button>
+                <button onClick={(e) => {
+                    e.stopPropagation();
+                    addMonsterToEncounter(monster);
+                }}>Add</button>
                 {/* Detailed information when expanded */}
                 {expandedInfo && (
                     <section>

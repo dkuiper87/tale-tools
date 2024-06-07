@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import partyExperienceThreshold from "../../helpers/partyExperienceThreshold.js";
 
 
-function PlayerParty() {
+function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
     const { register, handleSubmit, reset } = useForm();
-    const [party, setParty] = useState([]);
     const [partyName, setPartyName] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [selectPartyOptions, setSelectPartyOptions] = useState([]);
-    const [selectedParty, setSelectedParty] = useState("");
-    //const partyThreshold = party.reduce((total, character) => total + xpThresholdsByLevel[character.level['Easy']], 0);
 
     useEffect(() => {
         // Load saved parties from localStorage on component mount
         try {
-            const savedParties = Object.keys(localStorage).map(key => {
-                const item = localStorage.getItem(key);
-                return JSON.parse(item);  // May throw error
-            });
+            const savedParties = Object.keys(localStorage)
+                .map(key => {
+                    try {
+                        return JSON.parse(localStorage.getItem(key));
+                    } catch (error) {
+                        console.error(`Error parsing JSON for key ${key}:`, error);
+                        return null;
+                    }
+                })
+                .filter(party => party !== null && typeof party === 'object'); // Filter out non-valid JSON entries
             console.log("Loaded parties from localStorage:", savedParties);
             setSelectPartyOptions(savedParties);
         } catch (error) {
-            console.error("Error parsing JSON from localStorage:", error);
+            console.error("Error loading parties from localStorage:", error);
         }
     }, []);
 
@@ -35,31 +38,22 @@ function PlayerParty() {
         setParty(party.filter((_, i) => i !== index));
     };
 
-    const savePartyToLocalStorage = () => {
-        const partyData = { name: partyName, members: party };
-        localStorage.setItem(partyData.name, JSON.stringify(partyData));
-        setShowForm(false);
-        alert("Party saved!");
-        // Update the dropdown options
-        setSelectPartyOptions([...selectPartyOptions, partyData]);
-        setPartyName("");
-        setParty([]);
+    const updateCharacterInParty = (index, updatedCharacter) => {
+        const newParty = [...party];
+        newParty[index] = updatedCharacter;
+        setParty(newParty);
     };
 
-    const handlePartySelection = (e) => {
-        const selectedPartyName = e.target.value;
-        console.log("Selected party:", selectedPartyName);
-        setSelectedParty(selectedPartyName);
-        if (selectedPartyName) {
-            try {
-                const selectedPartyData = JSON.parse(localStorage.getItem(selectedPartyName));
-                console.log("Selected party data:", selectedPartyData);
-                setParty(selectedPartyData ? selectedPartyData.members : []);
-            } catch (error) {
-                console.error("Error parsing selected party JSON from localStorage:", error);
-            }
-        } else {
-            setParty([]);
+    const savePartyToLocalStorage = () => {
+        if (partyName !=="") {
+            const partyData = { name: partyName, members: party };
+            localStorage.setItem(partyData.name, JSON.stringify(partyData));
+            setShowForm(false);
+            alert("Party saved!");
+            //Update the dropdown options
+            setSelectPartyOptions([...selectPartyOptions.filter(p => p.name !== partyData.name), partyData]);
+            //setPartyName("");
+            //setParty([]);
         }
     };
 
@@ -74,14 +68,29 @@ function PlayerParty() {
         }
     };
 
+    const handleExpandAddPartyForm = () => {
+        setPartyName("");
+        setParty([]);
+        setSelectedParty("");
+        setShowForm(true);
+    };
 
+    const handleSelectedPartyChange = (e) => {
+        setSelectedParty(e.target.value);
+        if (e.target.value !== '') {
+            setShowForm(false);
+            const selectedPartyData = JSON.parse(localStorage.getItem(e.target.value));
+            setParty(selectedPartyData ? selectedPartyData.members : []);
+            setPartyName(selectedPartyData ? selectedPartyData.name : "");
+        }
+    };
 
     return (
         <>
             <h2>Party</h2>
             <p>
                 Choose Party:
-                <select onChange={handlePartySelection} value={selectedParty}>
+                <select onChange={handleSelectedPartyChange} value={selectedParty}>
                     <option value="">Select a party</option>
                     {selectPartyOptions.map((party) => (
                         <option key={party.name} value={party.name}>
@@ -92,6 +101,9 @@ function PlayerParty() {
                 {selectedParty && (
                     <button onClick={() => deleteParty(selectedParty)}>Delete Party</button>
                 )}
+                {!showForm && (
+                    <button onClick={handleExpandAddPartyForm}>Add New Party</button>
+                )}
             </p>
             {selectedParty && (
                 <>
@@ -99,18 +111,55 @@ function PlayerParty() {
                     <ul>
                         {party.map((character, index) => (
                             <li key={index}>
-                                {character.name} (Level {character.level})
+                                <input
+                                    type="text"
+                                    value={character.name}
+                                    onChange={(e) => updateCharacterInParty(index, { ...character, name: e.target.value })}
+                                />
+                                <select
+                                    value={character.level}
+                                    onChange={(e) => updateCharacterInParty(index, { ...character, level: Number(e.target.value) })}
+                                >
+                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
+                                        <option key={level} value={level}>{level}</option>
+                                    ))}
+                                </select>
+                                <button onClick={() => removeCharacterFromParty(index)}>Remove</button>
                             </li>
                         ))}
                     </ul>
+                    <form onSubmit={handleSubmit(addCharacterToParty)}>
+                        <p>
+                            <label>
+                                Character Name:
+                                <input
+                                    type="text"
+                                    minLength="1"
+                                    maxLength="50"
+                                    {...register("characterName", { required: true })}
+                                />
+                            </label>
+                            <label>
+                                Character Level:
+                                <select
+                                    defaultValue="1"
+                                    {...register("characterLevel", { required: true })}
+                                >
+                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
+                                        <option key={level} value={level}>{level}</option>
+                                    ))}
+                                </select>
+                            </label>
+                            <button type="submit">Add Character</button>
+                        </p>
+                    </form>
+                    <button onClick={savePartyToLocalStorage}>Save Changes</button>
+                    <h4>Encounter Difficulty</h4>
                     <p>Easy: {partyExperienceThreshold(party, 'Easy')}</p>
                     <p>Medium: {partyExperienceThreshold(party, 'Medium')}</p>
                     <p>Hard: {partyExperienceThreshold(party, 'Hard')}</p>
                     <p>Deadly: {partyExperienceThreshold(party, 'Deadly')}</p>
                 </>
-            )}
-            {!showForm && (
-                <button onClick={() => setShowForm(true)}>Add New Party</button>
             )}
             {showForm && (
                 <>
@@ -128,20 +177,21 @@ function PlayerParty() {
                                 Character Name:
                                 <input
                                     type="text"
+                                    minLength="1"
+                                    maxLength="50"
                                     {...register("characterName", { required: true })}
                                 />
                             </label>
                             <label>
                                 Character Level:
-                                <input
-                                    type="number"
-                                    min="1"
-                                    max="20"
-                                    {...register("characterLevel", {
-                                        required: true,
-                                        valueAsNumber: true,
-                                    })}
-                                />
+                                <select
+                                    defaultValue="1"
+                                    {...register("characterLevel", { required: true })}
+                                >
+                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
+                                        <option key={level} value={level}>{level}</option>
+                                    ))}
+                                </select>
                             </label>
                             <button type="submit">Add Character</button>
                         </p>
@@ -161,6 +211,5 @@ function PlayerParty() {
         </>
     );
 }
-
 
 export default PlayerParty;
