@@ -10,19 +10,19 @@ function MonsterListItem({ index, monster, addMonsterToEncounter }) {
         return `${score} (${modifier >= 0 ? '+' : ''}${modifier})`;
     };
 
-
     return (
         <li key={index} onClick={() => setExpandedInfo(!expandedInfo)}>
             <article>
                 {/* Monster's basic information */}
                 <header>
-                    <h2>{monster.name}</h2>
+                    <h2>{monster.name} (CR {monster.cr}) ({monsterXpByCr[monster.challenge_rating].toLocaleString()} XP)</h2>
                     <p>{monster.size} {monster.type}, {monster.alignment} {monster.document__slug.toUpperCase()}</p>
                 </header>
                 <button onClick={(e) => {
                     e.stopPropagation();
                     addMonsterToEncounter(monster);
-                }}>Add</button>
+                }}>Add
+                </button>
                 {/* Detailed information when expanded */}
                 {expandedInfo && (
                     <section>

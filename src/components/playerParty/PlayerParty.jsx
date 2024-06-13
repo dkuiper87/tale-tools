@@ -52,8 +52,6 @@ function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
             alert("Party saved!");
             //Update the dropdown options
             setSelectPartyOptions([...selectPartyOptions.filter(p => p.name !== partyData.name), partyData]);
-            //setPartyName("");
-            //setParty([]);
         }
     };
 
