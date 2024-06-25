@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import partyExperienceThreshold from "../../helpers/partyExperienceThreshold.js";
 
-
-function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
+function PlayerParty({ party, setParty, selectedParty, handlePartySelection }) {
     const { register, handleSubmit, reset } = useForm();
     const [partyName, setPartyName] = useState("");
     const [showForm, setShowForm] = useState(false);
@@ -11,22 +10,9 @@ function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
 
     useEffect(() => {
         // Load saved parties from localStorage on component mount
-        try {
-            const savedParties = Object.keys(localStorage)
-                .map(key => {
-                    try {
-                        return JSON.parse(localStorage.getItem(key));
-                    } catch (error) {
-                        console.error(`Error parsing JSON for key ${key}:`, error);
-                        return null;
-                    }
-                })
-                .filter(party => party !== null && typeof party === 'object'); // Filter out non-valid JSON entries
-            console.log("Loaded parties from localStorage:", savedParties);
-            setSelectPartyOptions(savedParties);
-        } catch (error) {
-            console.error("Error loading parties from localStorage:", error);
-        }
+        const savedParties = JSON.parse(localStorage.getItem('Parties')) || {};
+        const partyNames = Object.keys(savedParties);
+        setSelectPartyOptions(partyNames.map(name => ({ name })));
     }, []);
 
     const addCharacterToParty = (data) => {
@@ -45,22 +31,26 @@ function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
     };
 
     const savePartyToLocalStorage = () => {
-        if (partyName !=="") {
+        if (partyName !== "") {
+            const savedParties = JSON.parse(localStorage.getItem('Parties')) || {};
             const partyData = { name: partyName, members: party };
-            localStorage.setItem(partyData.name, JSON.stringify(partyData));
+            savedParties[partyName] = partyData;
+            localStorage.setItem('Parties', JSON.stringify(savedParties));
             setShowForm(false);
             alert("Party saved!");
-            //Update the dropdown options
-            setSelectPartyOptions([...selectPartyOptions.filter(p => p.name !== partyData.name), partyData]);
+            // Update the dropdown options
+            setSelectPartyOptions(Object.keys(savedParties).map(name => ({ name })));
         }
     };
 
     const deleteParty = (partyNameToDelete) => {
         if (window.confirm("Are you sure you want to delete this party?")) {
-            localStorage.removeItem(partyNameToDelete);
-            setSelectPartyOptions(selectPartyOptions.filter(party => party.name !== partyNameToDelete));
+            const savedParties = JSON.parse(localStorage.getItem('Parties')) || {};
+            delete savedParties[partyNameToDelete];
+            localStorage.setItem('Parties', JSON.stringify(savedParties));
+            setSelectPartyOptions(Object.keys(savedParties).map(name => ({ name })));
             if (selectedParty === partyNameToDelete) {
-                setSelectedParty("");
+                handlePartySelection("");
                 setParty([]);
             }
         }
@@ -69,15 +59,16 @@ function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
     const handleExpandAddPartyForm = () => {
         setPartyName("");
         setParty([]);
-        setSelectedParty("");
+        handlePartySelection("");
         setShowForm(true);
     };
 
     const handleSelectedPartyChange = (e) => {
-        setSelectedParty(e.target.value);
+        handlePartySelection(e.target.value);
         if (e.target.value !== '') {
             setShowForm(false);
-            const selectedPartyData = JSON.parse(localStorage.getItem(e.target.value));
+            const savedParties = JSON.parse(localStorage.getItem('Parties')) || {};
+            const selectedPartyData = savedParties[e.target.value];
             setParty(selectedPartyData ? selectedPartyData.members : []);
             setPartyName(selectedPartyData ? selectedPartyData.name : "");
         }
@@ -109,11 +100,13 @@ function PlayerParty({ party, setParty, selectedParty, setSelectedParty }) {
                     <ul>
                         {party.map((character, index) => (
                             <li key={index}>
+                                Name:
                                 <input
                                     type="text"
                                     value={character.name}
                                     onChange={(e) => updateCharacterInParty(index, { ...character, name: e.target.value })}
                                 />
+                                Level:
                                 <select
                                     value={character.level}
                                     onChange={(e) => updateCharacterInParty(index, { ...character, level: Number(e.target.value) })}

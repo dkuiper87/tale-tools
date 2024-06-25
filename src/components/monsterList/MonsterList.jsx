@@ -167,7 +167,7 @@ function MonsterList({addMonsterToEncounter }) {
 
     return (
         <>
-            <h3>{monsterCount} results!</h3>
+            <h3>{monsterCount} monsters found</h3>
             <label htmlFor="monsters-per-page">
                 Number of results:
                 <select

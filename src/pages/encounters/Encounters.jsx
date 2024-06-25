@@ -3,14 +3,12 @@ import PlayerParty from "../../components/playerParty/PlayerParty.jsx";
 import EncounterBuilder from "../../components/encounterBuilder/EncounterBuilder.jsx";
 import { useState, useEffect, useCallback } from "react";
 
+
 function Encounters() {
     const [encounter, setEncounter] = useState([]);
     const [selectedParty, setSelectedParty] = useState("");
+    const [useEncounterParty, setUseEncounterParty] = useState(false);
     const [party, setParty] = useState([]);
-
-    useEffect(() => {
-        console.log('Encounter state updated:', encounter);
-    }, [encounter]);
 
     const updateEncounter = useCallback((monster, count) => {
         setEncounter((prevEncounter) => {
@@ -22,17 +20,13 @@ function Encounters() {
                         ...newEncounter[existingMonsterIndex],
                         count: count,
                     };
-                    console.log(`Updated monster: ${monster.slug}, new count: ${count}`);
                 } else {
-                    console.log(`Removing the last monster: ${monster.slug}`);
                     newEncounter.splice(existingMonsterIndex, 1);
                 }
                 return newEncounter;
             } else if (count > 0) {
-                console.log(`Adding new monster: ${monster.name}`);
                 return [...prevEncounter, { ...monster, count: count }];
             } else {
-                console.log(`No monster found to remove`);
                 return prevEncounter;
             }
         });
@@ -60,8 +54,13 @@ function Encounters() {
     const handlePartySelection = (selectedPartyName) => {
         setSelectedParty(selectedPartyName);
         if (selectedPartyName) {
-            const selectedPartyData = JSON.parse(localStorage.getItem(selectedPartyName));
-            setParty(selectedPartyData ? selectedPartyData.members : []);
+            const parties = JSON.parse(localStorage.getItem('Parties'));
+            const selectedPartyData = parties[selectedPartyName];
+            if (selectedPartyData) {
+                setParty(selectedPartyData.members);
+            } else {
+                setParty([]);
+            }
         } else {
             setParty([]);
         }
@@ -74,11 +73,17 @@ function Encounters() {
                 party={party}
                 setParty={setParty}
                 selectedParty={selectedParty}
-                setSelectedParty={handlePartySelection}
+                handlePartySelection={handlePartySelection}
             />
             <EncounterBuilder
                 encounter={encounter}
+                setEncounter={setEncounter}
                 party={party}
+                selectedParty={selectedParty}
+                useEncounterParty={useEncounterParty}
+                setUseEncounterParty={setUseEncounterParty}
+                setSelectedParty={setSelectedParty}
+                handlePartySelection={handlePartySelection}
                 addMonsterToEncounter={addMonsterToEncounter}
                 removeMonsterFromEncounter={removeMonsterFromEncounter}
                 removeOneMonsterFromEncounter={removeOneMonsterFromEncounter}

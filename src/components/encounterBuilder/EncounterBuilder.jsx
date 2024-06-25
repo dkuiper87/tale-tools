@@ -3,9 +3,11 @@ import monsterXpByCr from "../../constants/dndconstants.jsx";
 import adjustedExperience from "../../helpers/adjustedExperience.js";
 import calculateEncounterDifficulty from "../../helpers/calculateEncounterDifficulty.js";
 
-function EncounterBuilder({ encounter, party, addMonsterToEncounter, removeMonsterFromEncounter, removeOneMonsterFromEncounter, updateMonsterCount }) {
+function EncounterBuilder({ encounter, setEncounter, party, selectedParty, addMonsterToEncounter, removeMonsterFromEncounter, removeOneMonsterFromEncounter, updateMonsterCount, handlePartySelection, useEncounterParty, setUseEncounterParty }) {
     const [difficulty, setDifficulty] = useState("None");
-
+    const [encounterName, setEncounterName] = useState("");
+    const [selectEncounterOptions, setSelectEncounterOptions] = useState([]);
+    const [selectedEncounter, setSelectedEncounter] = useState("");
     const totalExperience = encounter.reduce((total, monster) => total + (monsterXpByCr[monster.challenge_rating] * monster.count), 0);
 
     useEffect(() => {
@@ -14,9 +16,99 @@ function EncounterBuilder({ encounter, party, addMonsterToEncounter, removeMonst
         setDifficulty(newDifficulty);
     }, [encounter, party, totalExperience]);
 
+    //useEffect function to load saved encounters from local storage.
+    useEffect(() => {
+        // Load saved encounters from localStorage on component mount
+        const savedEncounters = JSON.parse(localStorage.getItem('Encounters')) || {};
+        const encounterNames = Object.keys(savedEncounters);
+        console.log("Loaded encounters from localStorage:", savedEncounters);
+        setSelectEncounterOptions(encounterNames.map(name => ({ name })));
+    }, []);
+
+    //Function to handle naming and saving an encounter to local storage
+    const saveEncounterToLocalStorage = () => {
+        if (encounterName !== "") {
+            const savedEncounters = JSON.parse(localStorage.getItem('Encounters')) || {};
+            const encounterData = { name: encounterName, encounter: encounter, madeForParty: party.name || selectedParty };
+            savedEncounters[encounterName] = encounterData;
+            localStorage.setItem('Encounters', JSON.stringify(savedEncounters));
+            alert("Encounter saved!");
+            // Update the dropdown options
+            setSelectEncounterOptions(Object.keys(savedEncounters).map(name => ({ name })));
+            setSelectedEncounter(encounterName);
+        }
+    };
+
+
+    //Function to handle deleting a saved encounter from local storage.
+    const deleteEncounter = (encounterNameToDelete) => {
+        if (window.confirm("Are you sure you want to delete this encounter?")) {
+            const savedEncounters = JSON.parse(localStorage.getItem('Encounters')) || {};
+            delete savedEncounters[encounterNameToDelete];
+            localStorage.setItem('Encounters', JSON.stringify(savedEncounters));
+            setSelectEncounterOptions(Object.keys(savedEncounters).map(name => ({ name })));
+            if (selectedEncounter === encounterNameToDelete) {
+                setSelectedEncounter("");
+                setEncounter([]);
+            }
+        }
+    };
+
+    const handleEncounterSelection = (e) => {
+        const selectedEncounterName = e.target.value;
+        setSelectedEncounter(selectedEncounterName);
+        if (selectedEncounterName) {
+            const savedEncounters = JSON.parse(localStorage.getItem('Encounters')) || {};
+            const selectedEncounterData = savedEncounters[selectedEncounterName];
+            setEncounter(selectedEncounterData ? selectedEncounterData.encounter : []);
+            setEncounterName(selectedEncounterData ? selectedEncounterData.name : "");
+            if (useEncounterParty && selectedEncounterData.madeForParty) {
+                handlePartySelection(selectedEncounterData.madeForParty);
+            }
+        } else {
+            setEncounter([]);
+        }
+    };
+
+    const handleAddNewEncounter = () => {
+        setEncounterName("");
+        setEncounter([]);
+        setSelectedEncounter("");
+    };
+
+
     return (
         <>
             <h2>Current Encounter</h2>
+            <p>
+                Choose Enounter:
+                <select onChange={handleEncounterSelection} value={selectedEncounter}>
+                    <option value="">Select an encounter</option>
+                    {selectEncounterOptions.map((encounter) => (
+                        <option key={encounter.name} value={encounter.name}>
+                            {encounter.name}
+                        </option>
+                    ))}
+                </select>
+                <button onClick={() => deleteEncounter(selectedEncounter)}>Delete Encounter</button>
+                <button onClick={handleAddNewEncounter}>Add New Encounter</button>
+            </p>
+            <label>
+                <input
+                    type="checkbox"
+                    checked={useEncounterParty}
+                    onChange={(e) => setUseEncounterParty(e.target.checked)}
+                />
+                Load the party that the encounter was made for when selecting an encounter.
+            </label>
+            <label>
+                Name encounter:
+                <input
+                    type="text"
+                    value={encounterName}
+                    onChange={(e) => setEncounterName(e.target.value)}
+                />
+            </label>
             <ul>
                 {encounter.map((monster, index) => (
                     <li key={index}>
@@ -40,26 +132,10 @@ function EncounterBuilder({ encounter, party, addMonsterToEncounter, removeMonst
             </ul>
             <p>Total Experience: {totalExperience.toLocaleString()}</p>
             <p>Total Experience adjusted for encounter size: {adjustedExperience(encounter.length, totalExperience).toLocaleString()}</p>
-            <p>Total number of monsters: {encounter.length}</p>
             <p>Difficulty: {difficulty}</p>
+            <button onClick={saveEncounterToLocalStorage}>Save Encounter</button>
         </>
     );
 }
 
-
-/*
-Volgende stappen (TO DO):
-Zorgen dat level en naam van characters aangepast kan worden in de geselecteerde party en daar ook een character toegevoegd of verwijderd kan worden.
-Encounter calculator component maken.
-    Zorgen dat een encounter aangemaakt kan worden en monsters hier aan toegevoegd kunnen worden vanuit de monsterlist.
-        -Zorgen dat je het aantal monsters kan aanpassen, en dat als je een monster toevoegt wat er al in zit deze +1 krijgt.
-        -Zorgen dat je monsters kan verwijderen.
-
-    Zorgen dat de encounter opgeslagen kan worden met een naam.
-    Zorgen dat je een eerder opgeslagen encounter kan openen en aanpassen.
-    Calculatie toevoegen die laat zien hoe moeilijk de encounter is voor de huidig geselecteerde party.
-            - Zodra party aangemaakt wordt en elke keer dat de party wordt aangepast de party experience thresholds aanpassen en opslaan in de party info
-            - party info voor selected party upliften
-            - in encounterbuilder de adjusted experience vergelijken met de opgeslagen values voor partyexpthresholds
-*/
 export default EncounterBuilder;
