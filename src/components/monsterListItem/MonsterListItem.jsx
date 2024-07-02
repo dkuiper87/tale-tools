@@ -1,5 +1,6 @@
 import { useState } from "react";
 import monsterXpByCr from "../../constants/dndconstants.jsx";
+import InteractiveDiceText from "../interactiveDiceText/InteractiveDiceText.jsx";
 
 function MonsterListItem({ index, monster, addMonsterToEncounter }) {
     const [expandedInfo, setExpandedInfo] = useState(false);
@@ -21,13 +22,15 @@ function MonsterListItem({ index, monster, addMonsterToEncounter }) {
                 <button onClick={(e) => {
                     e.stopPropagation();
                     addMonsterToEncounter(monster);
-                }}>Add
+                }}
+                >
+                    Add
                 </button>
                 {/* Detailed information when expanded */}
                 {expandedInfo && (
                     <section>
                         <p><strong>Armor Class:</strong> {monster.armor_class} ({monster.armor_desc})</p>
-                        <p><strong>Hit Points:</strong> {monster.hit_points} ({monster.hit_dice})</p>
+                        <p><strong>Hit Points:</strong> <InteractiveDiceText text={monster.hit_dice} /></p>
                         <p>
                             <strong>Speed:</strong>
                             Walk {monster.speed.walk} ft.,
@@ -69,7 +72,7 @@ function MonsterListItem({ index, monster, addMonsterToEncounter }) {
                                 <h3>Special Abilities</h3>
                                 {monster.special_abilities.map((ability) => (
                                     <p key={ability.name}>
-                                        <strong>{ability.name}:</strong> {ability.desc}
+                                        <strong>{ability.name}:</strong> <InteractiveDiceText text={ability.desc || ability.description} />
                                     </p>
                                 ))}
                             </section>
@@ -81,7 +84,7 @@ function MonsterListItem({ index, monster, addMonsterToEncounter }) {
                                 <h3>Actions</h3>
                                 {monster.actions.map((action) => (
                                     <p key={action.name}>
-                                        <strong>{action.name}:</strong> {action.desc}
+                                        <strong>{action.name}:</strong> <InteractiveDiceText text={action.desc || action.description} />
                                     </p>
                                 ))}
                             </section>
@@ -93,7 +96,7 @@ function MonsterListItem({ index, monster, addMonsterToEncounter }) {
                                 <p>{monster.legendary_desc}</p>
                                 {monster.legendary_actions.map((action) => (
                                     <p key={action.name}>
-                                        <strong>{action.name}:</strong> {action.desc}
+                                        <strong>{action.name}:</strong> <InteractiveDiceText text={action.desc || action.description} />
                                     </p>
                                 ))}
                             </section>
