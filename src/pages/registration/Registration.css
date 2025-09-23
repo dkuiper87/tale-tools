@@ -1,0 +1,12 @@
+.registration-form {
+    background-color: var(--main-black-color-transparent);
+    z-index: 1;
+    padding: 1em;
+    width: 33.33vw;
+    min-width: fit-content;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+

@@ -3,6 +3,7 @@ import {useAuth} from "../../context/AuthContext.jsx";
 import {useForm} from "react-hook-form";
 import noviUri from "../../constants/novibackend.jsx";
 import axios from "axios";
+import './Account.css'
 
 function Account() {
     const { user, updateEmail } = useAuth();
@@ -67,12 +68,18 @@ function Account() {
     return (
         <>
             {user ? (
-                <>
-                    <h1>{user.username}!</h1>
+                <div className="flex-col account">
+                    <h1>{user.username}</h1>
                     <h2>{newEmail}</h2>
                     {/* Form that allows the user to update their email with input validation and error handling. */}
-                    <form onSubmit={handleSubmitEmail(onSubmitEmail)}>
-                        <label htmlFor="email-field">
+                    <form
+                        onSubmit={handleSubmitEmail(onSubmitEmail)}
+                        className="flex-col"
+                    >
+                        <label
+                            htmlFor="email-field"
+                            className="flex-col"
+                        >
                             E-Mail:
                             <input
                                 type="text"
@@ -88,9 +95,12 @@ function Account() {
                                     },
                                 })}
                             />
-                            {errorsEmail.email && <p>{errorsEmail.email.message}</p>}
+                            {errorsEmail.email && <p className="error-text">{errorsEmail.email.message}</p>}
                         </label>
-                        <label htmlFor="email-confirmation-field">
+                        <label
+                            htmlFor="email-confirmation-field"
+                            className="flex-col"
+                        >
                             Confirm E-Mail:
                             <input
                                 type="text"
@@ -107,19 +117,24 @@ function Account() {
                                     validate: (emailMatch) => (emailMatch === getEmailValues().email) || 'Email does not match.'
                                 })}
                             />
-                            {errorsEmail['email-confirmation'] && <p>{errorsEmail['email-confirmation'].message}</p>}
+                            {errorsEmail['email-confirmation'] && <p className="error-text">{errorsEmail['email-confirmation'].message}</p>}
                         </label>
-                        <button
-                            type="submit"
-                            disabled={!isValidEmail} //check if form can be submitted
-                        >
-                            Update
-                        </button>
+                        <div className="flex-box justify-end">
+                            <button
+                                type="submit"
+                                disabled={!isValidEmail} //check if form can be submitted
+                            >
+                                Update
+                            </button>
+                        </div>
                     </form>
                     {successMessageEmail && <p>{successMessageEmail}</p>}
                     {/* Form that allows the user to update their password with input validation and error handling. */}
                     <form onSubmit={handleSubmitPassword(onSubmitPassword)}>
-                        <label htmlFor="password-field">
+                        <label
+                            htmlFor="password-field"
+                            className="flex-col"
+                        >
                             Password:
                             <input
                                 type="text"
@@ -139,9 +154,12 @@ function Account() {
                                     },
                                 })}
                             />
-                            {errorsPassword.password && <p>{errorsPassword.password.message}</p>}
+                            {errorsPassword.password && <p className="error-text">{errorsPassword.password.message}</p>}
                         </label>
-                        <label htmlFor="password-confirmation-field">
+                        <label
+                            htmlFor="password-confirmation-field"
+                            className="flex-col"
+                        >
                             Confirm Password:
                             <input
                                 type="text"
@@ -162,17 +180,19 @@ function Account() {
                                     validate: (passwordMatch) => (passwordMatch === getPasswordValues().password) || 'Password does not match.'
                                 })}
                             />
-                            {errorsPassword.repeatedPassword && <p>{errorsPassword.repeatedPassword.message}</p>}
+                            {errorsPassword.repeatedPassword && <p className="error-text">{errorsPassword.repeatedPassword.message}</p>}
                         </label>
-                        <button
-                            type="submit"
-                            disabled={!isValidPassword} //check if form can be submitted
-                        >
-                            Submit
-                        </button>
+                        <div className="flex-box justify-end">
+                            <button
+                                type="submit"
+                                disabled={!isValidPassword} //check if form can be submitted
+                            >
+                                Submit
+                            </button>
+                        </div>
                     </form>
-                    {successMessagePassword && <p>{successMessagePassword}</p>}
-                </>
+                    {successMessagePassword && <p className="error-text">{successMessagePassword}</p>}
+                </div>
             ) : (
                 <h1>Welcome to our website! Please log in.</h1>
             )}

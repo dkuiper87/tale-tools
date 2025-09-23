@@ -2,6 +2,8 @@ import MonsterList from "../../components/monsterList/MonsterList.jsx";
 import PlayerParty from "../../components/playerParty/PlayerParty.jsx";
 import EncounterBuilder from "../../components/encounterBuilder/EncounterBuilder.jsx";
 import { useState, useEffect, useCallback } from "react";
+import './Encounters.css';
+import {useAuth} from "../../context/AuthContext.jsx";
 
 
 function Encounters() {
@@ -9,6 +11,7 @@ function Encounters() {
     const [selectedParty, setSelectedParty] = useState("");
     const [useEncounterParty, setUseEncounterParty] = useState(false);
     const [party, setParty] = useState([]);
+    const {user} = useAuth();
 
     const updateEncounter = useCallback((monster, count) => {
         setEncounter((prevEncounter) => {
@@ -68,30 +71,45 @@ function Encounters() {
 
     return (
         <>
-            <h2>Encounters</h2>
-            <PlayerParty
-                party={party}
-                setParty={setParty}
-                selectedParty={selectedParty}
-                handlePartySelection={handlePartySelection}
-            />
-            <EncounterBuilder
-                encounter={encounter}
-                setEncounter={setEncounter}
-                party={party}
-                selectedParty={selectedParty}
-                useEncounterParty={useEncounterParty}
-                setUseEncounterParty={setUseEncounterParty}
-                setSelectedParty={setSelectedParty}
-                handlePartySelection={handlePartySelection}
-                addMonsterToEncounter={addMonsterToEncounter}
-                removeMonsterFromEncounter={removeMonsterFromEncounter}
-                removeOneMonsterFromEncounter={removeOneMonsterFromEncounter}
-                updateMonsterCount={updateMonsterCount}
-            />
-            <MonsterList
-                addMonsterToEncounter={addMonsterToEncounter}
-            />
+            {user ? (
+                <>
+                    <div class={'flex-col'}>
+                        <div class={'flex-box'}>
+                            <div className='small-margin'>
+                                <EncounterBuilder
+                                    encounter={encounter}
+                                    setEncounter={setEncounter}
+                                    party={party}
+                                    selectedParty={selectedParty}
+                                    useEncounterParty={useEncounterParty}
+                                    setUseEncounterParty={setUseEncounterParty}
+                                    setSelectedParty={setSelectedParty}
+                                    handlePartySelection={handlePartySelection}
+                                    addMonsterToEncounter={addMonsterToEncounter}
+                                    removeMonsterFromEncounter={removeMonsterFromEncounter}
+                                    removeOneMonsterFromEncounter={removeOneMonsterFromEncounter}
+                                    updateMonsterCount={updateMonsterCount}
+                                />
+                            </div>
+                            <div className='small-margin'>
+                                <PlayerParty
+                                    party={party}
+                                    setParty={setParty}
+                                    selectedParty={selectedParty}
+                                    handlePartySelection={handlePartySelection}
+                                />
+                            </div>
+                        </div>
+                        <div className='small-margin'>
+                            <MonsterList
+                                addMonsterToEncounter={addMonsterToEncounter}
+                            />
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <h1>Welcome to our website! Please log in.</h1>
+            )}
         </>
     )
 }

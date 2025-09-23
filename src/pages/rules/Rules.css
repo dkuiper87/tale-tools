@@ -1,0 +1,20 @@
+.rules-menu {
+    border: none;
+    background: none;
+    white-space: nowrap
+}
+
+.rules-menu:hover {
+    border: none;
+    border-color: var(--main-white-color);
+    text-decoration-line: underline;
+}
+
+.rules-menu:active {
+    background: none;
+}
+
+button:active {
+    color: var(--main-highlight-color);
+}
+

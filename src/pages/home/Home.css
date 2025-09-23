@@ -1,0 +1,31 @@
+.button {
+    border-radius: 20px;
+    border: 3px solid transparent;
+    padding: 0.6em 0.9em;
+    margin: 0.5em;
+    margin-top: 1.5em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    text-align: center;
+    background-color: var(--main-highlight-color);
+    cursor: pointer;
+    transition: border-color 0.25s;
+    width: 25vw;
+    min-width: fit-content;
+}
+.button:hover {
+    border: 3px solid;
+    border-color: var(--main-white-color);
+    text-decoration-line: underline;
+    color: var(--main-white-color);
+}
+
+.home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    min-height: fit-content;
+}
+

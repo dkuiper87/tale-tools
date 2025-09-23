@@ -1,0 +1,127 @@
+.nav-menu {
+    background-color: var(--main-black-color-transparent);
+    z-index: 1;
+    padding: 1em 0;
+    height: 100vh;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    transition: width 850ms;
+    width: 10vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    gap: 1em;
+}
+
+.nav-menu.expanded {
+    width: 15vw;
+    transition: 450ms;
+}
+
+.sidebar-content {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    height: 100%;
+}
+
+.sidebar-content li {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-menu a, .nav-menu button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--main-white-color);
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em 0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.nav-menu a:hover,
+.nav-menu button:hover {
+    color: var(--main-highlight-color);
+}
+
+.logout-item {
+    margin-top: auto;
+    width: 100%;
+}
+
+.logout-button {
+    font-size: 1.2rem;
+    color: var(--main-white-color);
+    background: none;
+    border: 3px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 2.5em;
+}
+
+.nav-menu .logout-button:hover {
+    border: none;
+}
+
+.nav-menu.expanded .logout-button {
+    border: 3px solid var(--main-white-color);
+    border-radius: 20px;
+    padding: 0.5em 1em;
+    width: auto;
+}
+
+.nav-menu.expanded .logout-button:hover {
+    color: var(--main-highlight-color);
+    border-color: var(--main-highlight-color);
+}
+
+.nav-menu.expanded .logout-button:active {
+    background: none;
+}
+
+.icon-placeholder {
+    font-size: 1.5rem;
+    display: inline-block;
+}
+
+.logo {
+    margin-bottom: 1em;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+}
+
+.toggle-button:hover {
+    border: none;
+}
+
+.toggle-button:active {
+    background: none;
+}

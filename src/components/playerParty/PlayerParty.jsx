@@ -76,129 +76,134 @@ function PlayerParty({ party, setParty, selectedParty, handlePartySelection }) {
 
     return (
         <>
-            <h2>Party</h2>
-            <p>
-                Choose Party:
-                <select onChange={handleSelectedPartyChange} value={selectedParty}>
-                    <option value="">Select a party</option>
-                    {selectPartyOptions.map((party) => (
-                        <option key={party.name} value={party.name}>
-                            {party.name}
-                        </option>
-                    ))}
-                </select>
-                {selectedParty && (
-                    <button onClick={() => deleteParty(selectedParty)}>Delete Party</button>
-                )}
-                {!showForm && (
-                    <button onClick={handleExpandAddPartyForm}>Add New Party</button>
-                )}
-            </p>
-            {selectedParty && (
-                <>
-                    <h3>{selectedParty} Members</h3>
-                    <ul>
-                        {party.map((character, index) => (
-                            <li key={index}>
-                                Name:
-                                <input
-                                    type="text"
-                                    value={character.name}
-                                    onChange={(e) => updateCharacterInParty(index, { ...character, name: e.target.value })}
-                                />
-                                Level:
-                                <select
-                                    value={character.level}
-                                    onChange={(e) => updateCharacterInParty(index, { ...character, level: Number(e.target.value) })}
-                                >
-                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
-                                        <option key={level} value={level}>{level}</option>
-                                    ))}
-                                </select>
-                                <button onClick={() => removeCharacterFromParty(index)}>Remove</button>
-                            </li>
-                        ))}
-                    </ul>
-                    <form onSubmit={handleSubmit(addCharacterToParty)}>
-                        <p>
-                            <label>
-                                Character Name:
-                                <input
-                                    type="text"
-                                    minLength="1"
-                                    maxLength="50"
-                                    {...register("characterName", { required: true })}
-                                />
-                            </label>
-                            <label>
-                                Character Level:
-                                <select
-                                    defaultValue="1"
-                                    {...register("characterLevel", { required: true })}
-                                >
-                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
-                                        <option key={level} value={level}>{level}</option>
-                                    ))}
-                                </select>
-                            </label>
-                            <button type="submit">Add Character</button>
-                        </p>
-                    </form>
-                    <button onClick={savePartyToLocalStorage}>Save Changes</button>
-                    <h4>Encounter Difficulty</h4>
+            <div className={'flex-box'}>
+                <div className={'flex-col'}>
+                    <h4>Experience Goals</h4>
                     <p>Easy: {partyExperienceThreshold(party, 'Easy')}</p>
                     <p>Medium: {partyExperienceThreshold(party, 'Medium')}</p>
                     <p>Hard: {partyExperienceThreshold(party, 'Hard')}</p>
                     <p>Deadly: {partyExperienceThreshold(party, 'Deadly')}</p>
-                </>
-            )}
-            {showForm && (
-                <>
-                    <label>
-                        Party Name:
-                        <input
-                            type="text"
-                            value={partyName}
-                            onChange={(e) => setPartyName(e.target.value)}
-                        />
-                    </label>
-                    <form onSubmit={handleSubmit(addCharacterToParty)}>
-                        <p>
+                </div>
+                <div className={'flex-col'}>
+                    <h2>Party</h2>
+                    <p>
+                        Choose Party:
+                        <select onChange={handleSelectedPartyChange} value={selectedParty}>
+                            <option value="">Select a party</option>
+                            {selectPartyOptions.map((party) => (
+                                <option key={party.name} value={party.name}>
+                                    {party.name}
+                                </option>
+                            ))}
+                        </select>
+                        {selectedParty && (
+                            <button onClick={() => deleteParty(selectedParty)}>Delete Party</button>
+                        )}
+                        {!showForm && (
+                            <button onClick={handleExpandAddPartyForm}>Add New Party</button>
+                        )}
+                    </p>
+                    {selectedParty && (
+                        <>
+                            <h3 className='center-text'>{selectedParty} Members</h3>
+                            <ul>
+                                {party.map((character, index) => (
+                                    <li key={index}>
+                                        Name:
+                                        <input
+                                            type="text"
+                                            value={character.name}
+                                            onChange={(e) => updateCharacterInParty(index, { ...character, name: e.target.value })}
+                                        />
+                                        Level:
+                                        <select
+                                            value={character.level}
+                                            onChange={(e) => updateCharacterInParty(index, { ...character, level: Number(e.target.value) })}
+                                        >
+                                            {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
+                                                <option key={level} value={level}>{level}</option>
+                                            ))}
+                                        </select>
+                                        <button onClick={() => removeCharacterFromParty(index)} className={'add-remove'}>-</button>
+                                    </li>
+                                ))}
+                            </ul>
+                            <h4 className='center-text'>Add New Character</h4>
+                            <form onSubmit={handleSubmit(addCharacterToParty)}>
+                                    <label>
+                                        Name:
+                                        <input
+                                            type="text"
+                                            minLength="1"
+                                            maxLength="50"
+                                            {...register("characterName", { required: true })}
+                                        />
+                                    </label>
+                                    <label>
+                                        Level:
+                                        <select
+                                            defaultValue="1"
+                                            {...register("characterLevel", { required: true })}
+                                        >
+                                            {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
+                                                <option key={level} value={level}>{level}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <button type="submit" className={'add-remove'}>+</button>
+                            </form>
+                            <button onClick={savePartyToLocalStorage}>Save Changes</button>
+                        </>
+                    )}
+                    {showForm && (
+                        <>
                             <label>
-                                Character Name:
+                                Party Name:
                                 <input
                                     type="text"
-                                    minLength="1"
-                                    maxLength="50"
-                                    {...register("characterName", { required: true })}
+                                    value={partyName}
+                                    onChange={(e) => setPartyName(e.target.value)}
                                 />
                             </label>
-                            <label>
-                                Character Level:
-                                <select
-                                    defaultValue="1"
-                                    {...register("characterLevel", { required: true })}
-                                >
-                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
-                                        <option key={level} value={level}>{level}</option>
-                                    ))}
-                                </select>
-                            </label>
-                            <button type="submit">Add Character</button>
-                        </p>
-                    </form>
-                    <h3>Party Members</h3>
-                    <ul>
-                        {party.map((character, index) => (
-                            <li key={index}>
-                                {character.name} (Level {character.level})
-                                <button onClick={() => removeCharacterFromParty(index)}>Remove</button>
-                            </li>
-                        ))}
-                    </ul>
-                    <button onClick={savePartyToLocalStorage}>Save Party</button>
-                </>
-            )}
+                            <form onSubmit={handleSubmit(addCharacterToParty)}>
+                                <p>
+                                    <label>
+                                        Character Name:
+                                        <input
+                                            type="text"
+                                            minLength="1"
+                                            maxLength="50"
+                                            {...register("characterName", { required: true })}
+                                        />
+                                    </label>
+                                    <label>
+                                        Character Level:
+                                        <select
+                                            defaultValue="1"
+                                            {...register("characterLevel", { required: true })}
+                                        >
+                                            {Array.from({ length: 20 }, (_, i) => i + 1).map(level => (
+                                                <option key={level} value={level}>{level}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <button type="submit">Add Character</button>
+                                </p>
+                            </form>
+                            <h3>Party Members</h3>
+                            <ul>
+                                {party.map((character, index) => (
+                                    <li key={index}>
+                                        {character.name} (Level {character.level})
+                                        <button onClick={() => removeCharacterFromParty(index)}>Remove</button>
+                                    </li>
+                                ))}
+                            </ul>
+                            <button onClick={savePartyToLocalStorage}>Save Party</button>
+                        </>
+                    )}
+                </div>
+            </div>
         </>
     );
 }

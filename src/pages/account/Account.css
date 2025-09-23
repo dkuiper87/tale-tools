@@ -1,0 +1,10 @@
+button {
+    max-width: fit-content;
+    color: var(--main-white-color);
+}
+
+.account {
+    max-width: 50ch;
+    padding-left: 2em;
+}
+

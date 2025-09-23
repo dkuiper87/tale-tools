@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import dndUri from "../../constants/dndbackend.jsx";
 import MonsterListItem from "../monsterListItem/MonsterListItem.jsx";
+import './MonsterList.css'
 
 function MonsterList({addMonsterToEncounter }) {
     const [monsters, setMonsters] = useState([]);
     const [uri, setUri] = useState(`${dndUri}v1/monsters/`);
-    const [monsterCount, setMonsterCount] = useState(null);
     const [previousPage, setPreviousPage] = useState(null);
     const [nextPage, setNextPage] = useState('');
     const [monstersPerPage, setMonstersPerPage] = useState(50);
@@ -34,7 +34,6 @@ function MonsterList({addMonsterToEncounter }) {
             const monsterData = await fetchMonsterList();
             if (monsterData && monsterData.results) {
                 setMonsters(monsterData.results);
-                setMonsterCount(monsterData.count);
                 setPreviousPage(monsterData.previous);
                 setNextPage(monsterData.next);
                 setTotalPages(Math.ceil(monsterData.count / monstersPerPage));
@@ -75,7 +74,6 @@ function MonsterList({addMonsterToEncounter }) {
             const result = await axios.get(newPage);
             if (result.data && result.data.results) {
                 setMonsters(result.data.results);
-                setMonsterCount(result.data.count);
                 setPreviousPage(result.data.previous);
                 setNextPage(result.data.next);
                 setCurrentPage(getPageNumberFromUrl(newPage));
@@ -167,93 +165,119 @@ function MonsterList({addMonsterToEncounter }) {
 
     return (
         <>
-            <h3>{monsterCount} monsters found</h3>
-            <label htmlFor="monsters-per-page">
-                Number of results:
-                <select
-                    id="monsters-per-page"
-                    value={monstersPerPage}
-                    onChange={handleMonstersPerPage}
-                >
-                    {monstersPerPageOptions.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
+            <div>
+                <div className={'flex-box justify-space-between'}>
+                    <div>
+                        <label htmlFor="sort-monster-list">
+                            Sort by:
+                            <select
+                                id="sort-monster-list"
+                                value={sortMonsterList}
+                                onChange={handleSortMonsterList}
+                            >
+                                {sortMonsterListOptions.map((option, index) => (
+                                    <option key={index} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label htmlFor="filter-cr-low-monster-list">
+                            From CR:
+                            <select
+                                id="filter-cr-low-monster-list"
+                                value={crLow}
+                                onChange={handleFilterMonsterByCrOptionsLow}
+                            >
+                                {filterMonsterByCrOptions.map((option, index) => (
+                                    <option key={index} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <label htmlFor="filter-cr-low-monster-list">
+                            To CR:
+                            <select
+                                id="filter-cr-high-monster-list"
+                                value={crHigh}
+                                onChange={handleFilterMonsterByCrOptionsHigh}
+                            >
+                                {filterMonsterByCrOptions.map((option, index) => (
+                                    <option key={index} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label htmlFor="monsters-per-page">
+                            Number of results:
+                            <select
+                                id="monsters-per-page"
+                                value={monstersPerPage}
+                                onChange={handleMonstersPerPage}
+                            >
+                                {monstersPerPageOptions.map((option, index) => (
+                                    <option key={index} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div className={'flex-col align-start'}>
+                    <ul>
+                        {monsters.map((monster) => (
+                            <MonsterListItem
+                                key={monster.slug}
+                                monster={monster}
+                                addMonsterToEncounter={addMonsterToEncounter}
+                            />
+                        ))}
+                    </ul>
+                </div>
+                <div className={'flex-box justify-center'}>
+                    <button
+                        disabled={!previousPage}
+                        onClick={() => handlePageChange(previousPage)}
+                        className={'pagination'}
+                    >
+                        &lt;
+                    </button>
+                    {generatePageNumbers().map((pageNumber, index) => (
+                        <button
+                            key={index}
+                            onClick={() => {
+                                const newUri = constructUri(dndUri + 'v1/monsters/', {
+                                    limit: monstersPerPage,
+                                    ordering: sortMonsterList,
+                                    cr1: crLow,
+                                    cr2: crHigh,
+                                    page: pageNumber
+                                });
+                                setUri(newUri);
+                                setCurrentPage(pageNumber);
+                            }}
+                            disabled={pageNumber === '...' || pageNumber === currentPage}
+                            className="pagination"
+                        >
+                            {pageNumber}
+                        </button>
                     ))}
-                </select>
-            </label>
-            <label htmlFor="sort-monster-list">
-                Sort by:
-                <select
-                    id="sort-monster-list"
-                    value={sortMonsterList}
-                    onChange={handleSortMonsterList}
-                >
-                    {sortMonsterListOptions.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <label htmlFor="filter-cr-low-monster-list">
-                From CR:
-                <select
-                    id="filter-cr-low-monster-list"
-                    value={crLow}
-                    onChange={handleFilterMonsterByCrOptionsLow}
-                >
-                    {filterMonsterByCrOptions.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <label htmlFor="filter-cr-low-monster-list">
-                To CR:
-                <select
-                    id="filter-cr-high-monster-list"
-                    value={crHigh}
-                    onChange={handleFilterMonsterByCrOptionsHigh}
-                >
-                    {filterMonsterByCrOptions.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <ul>
-                {monsters.map((monster) => (
-                    <MonsterListItem
-                        key={monster.slug}
-                        monster={monster}
-                        addMonsterToEncounter={addMonsterToEncounter}
-                    />
-                ))}
-            </ul>
-            <button
-                disabled={!previousPage}
-                onClick={() => handlePageChange(previousPage)}
-            >
-                Previous
-            </button>
-            {generatePageNumbers().map((pageNumber, index) => (
-                <button
-                    key={index}
-                    onClick={() => handlePageChange(`${uri}${uri.includes('?') ? '&' : '?'}page=${pageNumber}`)}
-                    disabled={pageNumber === '...' || pageNumber === currentPage}
-                >
-                    {pageNumber}
-                </button>
-            ))}
-            <button
-                disabled={!nextPage}
-                onClick={() => handlePageChange(nextPage)}
-            >
-                Next
-            </button>
+                    <button
+                        disabled={!nextPage}
+                        onClick={() => handlePageChange(nextPage)}
+                        className="pagination"
+                    >
+                        &gt;
+                    </button>
+                </div>
+            </div>
         </>
     );
 }
