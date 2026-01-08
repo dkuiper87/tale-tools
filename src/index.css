@@ -1,11 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --main-highlight-color: #EB5F08;
+  --secondary-highlight-color: #D00003;
+  --main-black-color: #100B00;
+  --main-black-color-transparent: rgba(16, 11, 0, 0.8);
+  --main-black-color-transparent-light: rgba(16, 11, 0, 0.4);
+  --main-white-color: #F3F3F3;
+
+  font-family: philosopher, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--main-white-color);
+  background-image: url("src/assets/backgroundHiRes.jpg");
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,54 +27,205 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--main-white-color);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--main-highlight-color);
 }
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
+  justify-content: center;
+  align-content: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 3.2em;
   line-height: 1.1;
+  text-align: center;
 }
 
+h2 {
+  text-align: center;
+}
+
+.active {
+  text-decoration-line: underline;
+}
+
+.add-pointer {
+  cursor: pointer;
+}
+
+/*Button styling */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  margin: 0.25em;
+  border-radius: 20px;
+  border: 3px solid transparent;
+  padding: 0.6em 0.9em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--main-highlight-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border: 3px solid;
+  border-color: var(--main-white-color);
+  text-decoration-line: underline;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+button:active {
+  background-color: var(--main-white-color);
+  border-color: var(--main-highlight-color);
+  color: var(--main-highlight-color);
+}
+
+.add-remove {
+  border: 1px solid;
+  border-radius: 25%;
+  background-color:rgba(0, 0, 0, 0.0);
+  transition: all 0.25s ease-in-out;
+  padding: 0.4em 0.6em;
+  flex-shrink: 0;
+}
+
+.add-remove:hover {
+  transform: scale(1.2);
+  text-decoration-line: none;
+}
+
+
+/* Form Styling */
+.error-text {
+  text-align: end;
+  color: var(--secondary-highlight-color);
+  font-size: 0.8em;
+}
+
+input[type=text]{
+  margin: 0.5em 1em;
+  background-color:rgba(0, 0, 0, 0.0);
+  border-color: var(--main-white-color);
+  border-radius: 0.5em;
+  border: 1px solid;
+}
+
+input[type=password]{
+  margin: 0.5em 1em;
+  background-color:rgba(0, 0, 0, 0.0);
+  border-color: var(--main-white-color);
+  border-radius: 0.5em;
+  border: 1px solid;
+}
+
+select{
+  margin: 0.5em 1em;
+  background-color:rgba(0, 0, 0, 0.0);
+  border-color: var(--main-white-color);
+  border-radius: 0.5em;
+  border: 1px solid;
+}
+
+option {
+  color: var(--main-black-color);
+}
+
+input[type=number] {
+  margin: 0.5em 1em;
+  background-color:rgba(0, 0, 0, 0.0);
+  border-color: var(--main-white-color);
+  border-radius: 0.5em;
+  border: 1px solid;
+  max-width: 4ch;
+  max-height: 1.5lh;
+}
+
+input[type=checkbox] {
+  margin: 0.5em 1em;
+  background-color:rgba(0, 0, 0, 0.0);
+  border-color: var(--main-white-color);
+  border-radius: 0.5em;
+  border: 1px solid;
+}
+
+/*Text Styling*/
+
+.center-text {
+  text-align: center;
+}
+
+/*Navbar scaling*/
+.app-container {
+  display: flex;
+  width: 100vw;
+  min-height: 100vh
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 1em;
+  min-height: 100vh;
+  transition: margin-left 450ms ease;
+}
+
+/* Margin */
+
+.small-margin {
+  margin: 1em;
+}
+
+.medium-margin {
+  margin: 1.5em;
+}
+
+.large-margin {
+  margin: 2em;
+}
+
+/* Flex-box settings */
+.flex-box {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+
+.align-start {
+  align-items: start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: end;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.justify-start {
+  justify-items: start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: end;
 }

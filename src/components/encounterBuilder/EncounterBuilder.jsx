@@ -80,60 +80,69 @@ function EncounterBuilder({ encounter, setEncounter, party, selectedParty, addMo
     return (
         <>
             <h2>Current Encounter</h2>
-            <p>
-                Choose Enounter:
-                <select onChange={handleEncounterSelection} value={selectedEncounter}>
-                    <option value="">Select an encounter</option>
-                    {selectEncounterOptions.map((encounter) => (
-                        <option key={encounter.name} value={encounter.name}>
-                            {encounter.name}
-                        </option>
-                    ))}
-                </select>
-                <button onClick={() => deleteEncounter(selectedEncounter)}>Delete Encounter</button>
-                <button onClick={handleAddNewEncounter}>Add New Encounter</button>
-            </p>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={useEncounterParty}
-                    onChange={(e) => setUseEncounterParty(e.target.checked)}
-                />
-                Load the party that the encounter was made for when selecting an encounter.
-            </label>
-            <label>
-                Name encounter:
-                <input
-                    type="text"
-                    value={encounterName}
-                    onChange={(e) => setEncounterName(e.target.value)}
-                />
-            </label>
-            <ul>
-                {encounter.map((monster, index) => (
-                    <li key={index}>
-                        {monster.name} (CR {monster.challenge_rating}) ({monsterXpByCr[monster.challenge_rating].toLocaleString()} XP)
-                        <button onClick={() => removeOneMonsterFromEncounter(monster)}>-</button>
-                        x
+            <div className={'flex-box'}>
+                <div className={'flex-col'}>
+                    <p>
+                        Choose Enounter:
+                        <select onChange={handleEncounterSelection} value={selectedEncounter}>
+                            <option value="">Select an encounter</option>
+                            {selectEncounterOptions.map((encounter) => (
+                                <option key={encounter.name} value={encounter.name}>
+                                    {encounter.name}
+                                </option>
+                            ))}
+                        </select>
+                    </p>
+                    <label>
                         <input
-                            type="number"
-                            value={monster.count}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (value !== "" && parseInt(value, 10) > 0) {
-                                    updateMonsterCount(monster, parseInt(value, 10));
-                                }
-                            }}
+                            type="checkbox"
+                            checked={useEncounterParty}
+                            onChange={(e) => setUseEncounterParty(e.target.checked)}
                         />
-                        <button onClick={() => addMonsterToEncounter(monster)}>+</button>
-                        <button onClick={() => removeMonsterFromEncounter(index)}>Remove</button>
-                    </li>
-                ))}
-            </ul>
-            <p>Total Experience: {totalExperience.toLocaleString()}</p>
-            <p>Total Experience adjusted for encounter size: {adjustedExperience(encounter.length, totalExperience).toLocaleString()}</p>
-            <p>Difficulty: {difficulty}</p>
-            <button onClick={saveEncounterToLocalStorage}>Save Encounter</button>
+                        Also select the party that the encounter was made for.
+                    </label>
+                    <label>
+                        Name encounter:
+                        <input
+                            type="text"
+                            value={encounterName}
+                            onChange={(e) => setEncounterName(e.target.value)}
+                        />
+                    </label>
+                    <div className='flex-col align-center'>
+                        <button onClick={() => deleteEncounter(selectedEncounter)}>Delete Encounter</button>
+                        <button onClick={handleAddNewEncounter}>Add New Encounter</button>
+                        <button onClick={saveEncounterToLocalStorage}>Save Encounter</button>
+                    </div>
+                </div>
+                <div className={'flex-col'}>
+                    <ul>
+                        {encounter.map((monster, index) => (
+                            <li key={index} className='flex-box'>
+                                {monster.name}
+                                (CR {monster.challenge_rating})
+                                ({monsterXpByCr[monster.challenge_rating].toLocaleString()} XP)
+                                x
+                                <input
+                                    type="number"
+                                    value={monster.count}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value !== "" && parseInt(value, 10) > 0) {
+                                            updateMonsterCount(monster, parseInt(value, 10));
+                                        }
+                                    }}
+                                />
+                                <div className='justify-end align-end'>
+                                    <button onClick={() => removeOneMonsterFromEncounter(monster)} className={'add-remove'}>-</button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <p className='center-text'>Total Experience: {adjustedExperience(encounter.length, totalExperience).toLocaleString()}</p>
+                    <h2>Difficulty: {difficulty}</h2>
+                </div>
+            </div>
         </>
     );
 }

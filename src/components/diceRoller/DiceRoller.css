@@ -1,0 +1,91 @@
+.dice-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 4rem;
+    height: 4rem;
+    z-index: 1000;
+}
+
+.dice-main {
+    width: 100%;
+    height: 100%;
+    background-color: var(--main-highlight-color);
+    color: var(--main-white-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+/* hidden until hover */
+.dice-buttons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12rem;
+    height: 12rem;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* expand on hover of container */
+.dice-container:hover .dice-buttons {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.dice-container:hover .dice-main {
+    border: 3px solid;
+    border-color: var(--main-white-color);
+}
+
+.dice-buttons button {
+    position: absolute;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--main-highlight-color);
+    color: var(--main-white-color);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    top: 50%;
+    left: 50%;
+}
+
+/* place 7 buttons at an arc*/
+.dice-buttons button:nth-child(1) {
+    transform: rotate(180deg) translate(6rem) rotate(-180deg);
+}
+.dice-buttons button:nth-child(2) {
+    transform: rotate(195deg) translate(8rem) rotate(-195deg);
+}
+.dice-buttons button:nth-child(3) {
+    transform: rotate(210deg) translate(6rem) rotate(-210deg);
+}
+.dice-buttons button:nth-child(4) {
+    transform: rotate(225deg) translate(8rem) rotate(-225deg);
+}
+.dice-buttons button:nth-child(5) {
+    transform: rotate(240deg) translate(6rem) rotate(-240deg);
+}
+.dice-buttons button:nth-child(6) {
+    transform: rotate(255deg) translate(8rem) rotate(-255deg);
+}
+.dice-buttons button:nth-child(7) {
+    transform: rotate(270deg) translate(6rem) rotate(-270deg);
+}
+

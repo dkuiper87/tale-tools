@@ -2,8 +2,11 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import dndUri from "../../constants/dndbackend.jsx";
 import RulesItem from "../../components/rulesItem/RulesItem.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
+import './Rules.css'
 
 function Rules() {
+    const {user} = useAuth();
     const [rules, setRules] = useState([]);
     const [navSelection, setNavSelection] = useState('');
     const rulesNav =
@@ -39,44 +42,35 @@ function Rules() {
 
     return (
         <>
-            <nav>
-                <ul>
-                    {rulesNav.map((navItem) => (
-                        <li key={navItem}>
-                            <button
-                                onClick={() => setNavSelection(navItem)}
-                                className={navSelection === navItem ? 'active' : ''}
-                            >
-                                {navItem}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            </nav>
-            <ul>
-                {rules.filter(rule => rule.parent === navSelection).map((rule) => (
-                    /*<article key={index}>
-                        <h2>{rule.name}</h2>
-                        {/!*<div>{formatDescription(rule.desc)}</div>*!/}
-                    </article>*/
-                    <RulesItem
-                        key={rule.slug}
-                        rule={rule}
-                    />
-                ))}
-            </ul>
+            {user ? (
+                <>
+                    <nav>
+                        <ul class='flex-box'>
+                            {rulesNav.map((navItem) => (
+                                <li key={navItem}>
+                                    <button
+                                        onClick={() => setNavSelection(navItem)}
+                                        className={navSelection === navItem ? 'active rules-menu' : 'rules-menu'}
+                                    >
+                                        {navItem}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                    <ul>
+                        {rules.filter(rule => rule.parent === navSelection).map((rule) => (
+                            <RulesItem
+                                key={rule.slug}
+                                rule={rule}
+                            />
+                        ))}
+                    </ul>
+                </>
+            ) : (
+                <h1>Welcome to our website! Please log in.</h1>
+            )}
         </>
     );
 }
-/*
-Gameplay Mechanics
-Combat
-Equipment
-Characters
-Rules
-Character Advancement
-
-
-Legal Information
- */
 export default Rules

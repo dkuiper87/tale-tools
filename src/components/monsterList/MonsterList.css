@@ -1,0 +1,16 @@
+.pagination {
+    border: 3px solid;
+    background-color:rgba(0, 0, 0, 0.0);
+    transition: all 0.25s ease-in-out;
+}
+
+.pagination:hover {
+    background-color: var(--main-highlight-color);
+    transform: scale(1.2);
+    text-decoration-line: none;
+}
+
+.pagination:active {
+    background-color: var(--main-highlight-color);
+    color: var(--main-highlight-color);
+}
