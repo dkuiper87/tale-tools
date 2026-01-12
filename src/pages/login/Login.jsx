@@ -1,5 +1,6 @@
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 import {useAuth} from "../../context/AuthContext.jsx";
 import './Login.css';
 import Logo from "../../assets/Logo.jsx";
@@ -8,15 +9,25 @@ function Login() {
     const { register, getValues, handleSubmit, formState: { errors, isValid } } = useForm({mode: `onBlur`});
     const navigate = useNavigate();
     const { login } = useAuth();
+    const [submitError, setSubmitError] = useState(null);
 
     //Function to hande the form submit
     async function handleFormSubmit(data) {
+        setSubmitError(null); //clear error on new submit attempt
         try {
             const result = await login(data); // Call the login function provided by the context
             localStorage.setItem('token', result.data.accessToken);
             navigate("/account");
         } catch (error) {
             console.error("Error logging in to account:", error);
+
+            if (!error.response) {
+                setSubmitError("The server is currently unreachable. Please try again later.");
+            } else if (error.response.status === 401) {
+                setSubmitError("Incorrect username or password.");
+            } else {
+                setSubmitError("Something went wrong. Please try again.");
+            }
         }
     }
 
@@ -93,6 +104,9 @@ function Login() {
                         >
                             Log In
                         </button>
+                        {submitError && (
+                            <p className="error-text">{submitError}</p>
+                        )}
                     </div>
                 </form>
             </div>
