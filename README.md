@@ -1,5 +1,23 @@
 # Tale Tools – D&D 5e Dungeon Master Tool
 
+## Inhoudsopgave
+
+- [Inleiding](#inleiding)
+- [Benodigdheden](#benodigdheden)
+- [Installatiehandleiding – Stap-voor-stap (Windows)](#installatiehandleiding--stap-voor-stap-windows)
+   - [Optionele methode – Project clonen via WebStorm](#optionele-methode--project-clonen-via-webstorm)
+   - [Stap 1 – Een terminal openen in Windows](#stap-1--een-terminal-openen-in-windows)
+   - [Stap 2 – Kies een locatie voor het project](#stap-2--kies-een-locatie-voor-het-project)
+   - [Stap 3 – Project clonen vanaf GitHub](#stap-3--project-clonen-vanaf-github)
+   - [Stap 4 – Project openen in WebStorm](#stap-4--project-openen-in-webstorm)
+   - [Stap 5 – Terminal openen in WebStorm](#stap-5--terminal-openen-in-webstorm)
+   - [Stap 6 – Dependencies installeren](#stap-6--dependencies-installeren)
+   - [Stap 7 – Applicatie starten](#stap-7--applicatie-starten)
+   - [Stap 8 – Applicatie openen in de browser](#stap-8--applicatie-openen-in-de-browser)
+- [Inloggen / accounts](#inloggen--accounts)
+- [Beschikbare npm-commando’s](#beschikbare-npm-commandos)
+- [Controle Node.js installatie](#controle-nodejs-installatie)
+
 ## Inleiding
 
 Deze applicatie is een webgebaseerde tool ter ondersteuning van het spelen en voorbereiden van **Dungeons & Dragons 5e**.
